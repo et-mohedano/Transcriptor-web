@@ -24,7 +24,13 @@
 
     <div id="result" class="hidden">
       <h2>📝 Transcripción completada</h2>
-      <a id="downloadLink" href="/download" class="download" target="_blank">⬇️ Descargar TXT</a>
+
+      <textarea id="transcriptionBox" readonly></textarea>
+
+      <div class="button-group">
+        <button id="copyButton" class="copy-btn">📋 Copiar texto</button>
+        <a id="downloadLink" href="/download" class="download" target="_blank">⬇️ Descargar TXT</a>
+      </div>
     </div>
   </div>
 

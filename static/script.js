@@ -11,11 +11,12 @@ document.getElementById("uploadForm").addEventListener("submit", function (e) {
   const progressBar = document.getElementById("progress");
   const statusText = document.getElementById("status-text");
   const resultDiv = document.getElementById("result");
+  const transcriptionBox = document.getElementById("transcriptionBox");
 
   progressContainer.classList.remove("hidden");
   resultDiv.classList.add("hidden");
   progressBar.style.width = "0%";
-  statusText.textContent = "Subiendo video...";
+  statusText.textContent = "📤 Subiendo video...";
 
   fetch("/upload", {
     method: "POST",
@@ -37,7 +38,6 @@ document.getElementById("uploadForm").addEventListener("submit", function (e) {
           .then((progressData) => {
             statusText.textContent = progressData.message;
 
-            // Simulación de barra (no exacta, visual)
             if (progressData.status === "processing" && progress < 90) progress += 10;
             if (progressData.status === "done") progress = 100;
             progressBar.style.width = progress + "%";
@@ -46,6 +46,13 @@ document.getElementById("uploadForm").addEventListener("submit", function (e) {
               clearInterval(interval);
               statusText.textContent = "✅ Transcripción lista";
               resultDiv.classList.remove("hidden");
+
+              // Cargar texto transcripto automáticamente
+              fetch("/download")
+                .then((r) => r.text())
+                .then((text) => {
+                  transcriptionBox.value = text;
+                });
             }
 
             if (progressData.status === "error") {
@@ -59,4 +66,20 @@ document.getElementById("uploadForm").addEventListener("submit", function (e) {
     .catch((err) => {
       alert("Error subiendo archivo: " + err);
     });
+});
+
+// Botón para copiar texto
+document.getElementById("copyButton").addEventListener("click", () => {
+  const textArea = document.getElementById("transcriptionBox");
+  textArea.select();
+  document.execCommand("copy");
+
+  const btn = document.getElementById("copyButton");
+  btn.textContent = "✅ Copiado!";
+  btn.style.background = "#28a745";
+
+  setTimeout(() => {
+    btn.textContent = "📋 Copiar texto";
+    btn.style.background = "#17a2b8";
+  }, 1500);
 });
