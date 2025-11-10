@@ -11,17 +11,24 @@
         <h1>🎧 Transcriptor Web</h1>
         <p>Sube un video o ingresa una URL de YouTube para obtener su transcripción en texto.</p>
 
-        <h3>Subir video local</h3>
-        <input type="file" id="videoInput" accept="video/*">
-        <button onclick="uploadVideo()">Subir y transcribir</button>
+        <div class="section">
+            <h3>📁 Subir video local</h3>
+            <input type="file" id="videoInput" accept="video/*">
+            <button onclick="uploadVideo()">Subir y transcribir</button>
+        </div>
 
-        <h3>O ingresar URL de YouTube</h3>
-        <input type="text" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=...">
-        <button onclick="processYouTube()">Transcribir desde YouTube</button>
+        <div class="section">
+            <h3>🌐 Transcribir desde YouTube</h3>
+            <input type="text" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=...">
+            <button onclick="processYouTube()">Iniciar</button>
+        </div>
 
-        <div id="progress">⏳ Esperando archivo o URL...</div>
+        <div id="progress-box">
+            <div id="progress-bar"><div id="progress-fill"></div></div>
+            <p id="progress-text">⏳ Esperando archivo o URL...</p>
+        </div>
 
-        <div id="resultBox" style="display:none;">
+        <div id="resultBox" class="hidden">
             <h3>📝 Transcripción</h3>
             <textarea id="transcriptionText" readonly></textarea>
             <div class="actions">
@@ -32,6 +39,11 @@
     </div>
 
     <script>
+        function updateProgress(percent, message) {
+            document.getElementById("progress-fill").style.width = percent + "%";
+            document.getElementById("progress-text").textContent = message;
+        }
+
         function uploadVideo() {
             const file = document.getElementById("videoInput").files[0];
             if (!file) return alert("Selecciona un archivo de video primero.");
@@ -39,14 +51,17 @@
             const formData = new FormData();
             formData.append("video", file);
 
+            updateProgress(10, "📤 Subiendo video...");
+
             fetch("/upload", { method: "POST", body: formData })
                 .then(r => r.json())
-                .then(() => checkProgress());
+                .then(() => monitorProgress());
         }
 
         function processYouTube() {
             const url = document.getElementById("youtubeUrl").value.trim();
             if (!url) return alert("Ingresa una URL válida de YouTube.");
+            updateProgress(10, "📥 Descargando desde YouTube...");
 
             fetch("/youtube", {
                 method: "POST",
@@ -54,24 +69,34 @@
                 body: JSON.stringify({ url })
             })
             .then(r => r.json())
-            .then(() => checkProgress());
+            .then(() => monitorProgress());
         }
 
-        function checkProgress() {
+        function monitorProgress() {
+            let percent = 20;
             const interval = setInterval(() => {
                 fetch("/progress")
                     .then(r => r.json())
                     .then(data => {
-                        document.getElementById("progress").textContent = data.message;
+                        document.getElementById("progress-text").textContent = data.message;
+
+                        if (data.status === "processing" && percent < 90) percent += 10;
+                        if (data.status === "done") percent = 100;
+                        document.getElementById("progress-fill").style.width = percent + "%";
+
                         if (data.status === "done") {
                             clearInterval(interval);
-                            document.getElementById("resultBox").style.display = "block";
+                            document.getElementById("resultBox").classList.remove("hidden");
                             document.getElementById("transcriptionText").value = data.text || "";
                             document.getElementById("downloadLink").href = "/download";
                         }
-                        if (data.status === "error") clearInterval(interval);
+
+                        if (data.status === "error") {
+                            clearInterval(interval);
+                            document.getElementById("progress-fill").style.background = "#dc3545";
+                        }
                     });
-            }, 2000);
+            }, 1500);
         }
 
         function copyText() {

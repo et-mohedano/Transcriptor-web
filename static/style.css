@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background: #f4f6f9;
     color: #333;
     margin: 0;
@@ -10,7 +10,7 @@ body {
 .container {
     max-width: 600px;
     margin: auto;
-    background: white;
+    background: #fff;
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -18,6 +18,10 @@ body {
 
 h1 {
     color: #0078d7;
+}
+
+.section {
+    margin-bottom: 20px;
 }
 
 input[type="file"], input[type="text"], textarea {
@@ -29,7 +33,6 @@ input[type="file"], input[type="text"], textarea {
 }
 
 button, a {
-    display: inline-block;
     background: #0078d7;
     color: white;
     border: none;
@@ -44,16 +47,42 @@ button:hover, a:hover {
     background: #005ea0;
 }
 
-textarea {
+#progress-box {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#progress-bar {
     width: 100%;
+    height: 15px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+#progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #0078d7;
+    transition: width 0.5s ease;
+}
+
+textarea {
+    width: 95%;
     height: 250px;
+    margin: 10px auto;
+    display: block;
     resize: none;
 }
 
-#progress {
-    margin-top: 15px;
-    font-size: 16px;
-    font-weight: bold;
+.hidden {
+    display: none;
+}
+
+.actions {
+    margin-top: 10px;
 }
 
 @media (max-width: 600px) {
