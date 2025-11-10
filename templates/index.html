@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transcriptor con Whisper (Flask + AJAX)</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <h1>🎙️ Transcriptor de Video a Texto</h1>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" name="video" id="video" accept="video/*" required />
+      <button type="submit">Iniciar transcripción</button>
+    </form>
+
+    <div id="progress-container" class="hidden">
+      <div class="progress-bar">
+        <div id="progress"></div>
+      </div>
+      <p id="status-text">Esperando archivo...</p>
+    </div>
+
+    <div id="result" class="hidden">
+      <h2>📝 Transcripción completada</h2>
+      <a id="downloadLink" href="/download" class="download" target="_blank">⬇️ Descargar TXT</a>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
