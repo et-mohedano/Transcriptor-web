@@ -1,39 +1,85 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Transcriptor con Whisper (Flask + AJAX)</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcriptor Web</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <h1>🎙️ Transcriptor de Video a Texto</h1>
+    <div class="container">
+        <h1>🎧 Transcriptor Web</h1>
+        <p>Sube un video o ingresa una URL de YouTube para obtener su transcripción en texto.</p>
 
-    <form id="uploadForm" enctype="multipart/form-data">
-      <input type="file" name="video" id="video" accept="video/*" required />
-      <button type="submit">Iniciar transcripción</button>
-    </form>
+        <h3>Subir video local</h3>
+        <input type="file" id="videoInput" accept="video/*">
+        <button onclick="uploadVideo()">Subir y transcribir</button>
 
-    <div id="progress-container" class="hidden">
-      <div class="progress-bar">
-        <div id="progress"></div>
-      </div>
-      <p id="status-text">Esperando archivo...</p>
+        <h3>O ingresar URL de YouTube</h3>
+        <input type="text" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=...">
+        <button onclick="processYouTube()">Transcribir desde YouTube</button>
+
+        <div id="progress">⏳ Esperando archivo o URL...</div>
+
+        <div id="resultBox" style="display:none;">
+            <h3>📝 Transcripción</h3>
+            <textarea id="transcriptionText" readonly></textarea>
+            <div class="actions">
+                <button onclick="copyText()">📋 Copiar texto</button>
+                <a id="downloadLink" href="#" download>📄 Descargar TXT</a>
+            </div>
+        </div>
     </div>
 
-    <div id="result" class="hidden">
-      <h2>📝 Transcripción completada</h2>
+    <script>
+        function uploadVideo() {
+            const file = document.getElementById("videoInput").files[0];
+            if (!file) return alert("Selecciona un archivo de video primero.");
 
-      <textarea id="transcriptionBox" readonly></textarea>
+            const formData = new FormData();
+            formData.append("video", file);
 
-      <div class="button-group">
-        <button id="copyButton" class="copy-btn">📋 Copiar texto</button>
-        <a id="downloadLink" href="/download" class="download" target="_blank">⬇️ Descargar TXT</a>
-      </div>
-    </div>
-  </div>
+            fetch("/upload", { method: "POST", body: formData })
+                .then(r => r.json())
+                .then(() => checkProgress());
+        }
 
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+        function processYouTube() {
+            const url = document.getElementById("youtubeUrl").value.trim();
+            if (!url) return alert("Ingresa una URL válida de YouTube.");
+
+            fetch("/youtube", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ url })
+            })
+            .then(r => r.json())
+            .then(() => checkProgress());
+        }
+
+        function checkProgress() {
+            const interval = setInterval(() => {
+                fetch("/progress")
+                    .then(r => r.json())
+                    .then(data => {
+                        document.getElementById("progress").textContent = data.message;
+                        if (data.status === "done") {
+                            clearInterval(interval);
+                            document.getElementById("resultBox").style.display = "block";
+                            document.getElementById("transcriptionText").value = data.text || "";
+                            document.getElementById("downloadLink").href = "/download";
+                        }
+                        if (data.status === "error") clearInterval(interval);
+                    });
+            }, 2000);
+        }
+
+        function copyText() {
+            const text = document.getElementById("transcriptionText");
+            text.select();
+            document.execCommand("copy");
+            alert("Texto copiado al portapapeles ✅");
+        }
+    </script>
 </body>
 </html>

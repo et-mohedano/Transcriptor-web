@@ -1,100 +1,70 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f5f7fb;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 100vh;
-  margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
 }
 
 .container {
-  margin-top: 60px;
-  max-width: 700px;
-  background: white;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
-  text-align: center;
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-button {
-  background: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+h1 {
+    color: #0078d7;
 }
 
-button:hover {
-  background: #0056b3;
+input[type="file"], input[type="text"], textarea {
+    width: 90%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
 }
 
-.hidden {
-  display: none;
+button, a {
+    display: inline-block;
+    background: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    text-decoration: none;
+    margin: 5px;
 }
 
-.progress-bar {
-  width: 100%;
-  height: 20px;
-  background-color: #e6e6e6;
-  border-radius: 10px;
-  margin-top: 20px;
-  overflow: hidden;
-}
-
-#progress {
-  height: 100%;
-  width: 0%;
-  background-color: #007bff;
-  transition: width 0.5s ease;
-}
-
-#status-text {
-  margin-top: 10px;
-  color: #333;
+button:hover, a:hover {
+    background: #005ea0;
 }
 
 textarea {
-  width: 100%;
-  height: 250px;
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  resize: vertical;
-  font-family: monospace;
-  font-size: 14px;
-  color: #333;
-  background-color: #f8f9fa;
+    width: 100%;
+    height: 250px;
+    resize: none;
 }
 
-.button-group {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
+#progress {
+    margin-top: 15px;
+    font-size: 16px;
+    font-weight: bold;
 }
 
-.copy-btn {
-  background: #17a2b8;
-}
-
-.copy-btn:hover {
-  background: #138496;
-}
-
-.download {
-  display: inline-block;
-  text-decoration: none;
-  background: #28a745;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-}
-
-.download:hover {
-  background: #218838;
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+        padding: 15px;
+    }
+    h1 {
+        font-size: 22px;
+    }
+    textarea {
+        height: 200px;
+    }
 }
